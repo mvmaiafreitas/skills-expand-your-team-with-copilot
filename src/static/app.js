@@ -523,6 +523,17 @@ document.addEventListener("DOMContentLoaded", () => {
       ${tagHtml}
       <h4>${name}</h4>
       <p>${details.description}</p>
+      <div class="social-share-buttons">
+        <button class="share-button twitter" data-activity="${name}" data-description="${details.description}" title="Share on Twitter">
+          <span class="share-icon">🐦</span>
+        </button>
+        <button class="share-button facebook" data-activity="${name}" data-description="${details.description}" title="Share on Facebook">
+          <span class="share-icon">📘</span>
+        </button>
+        <button class="share-button linkedin" data-activity="${name}" data-description="${details.description}" title="Share on LinkedIn">
+          <span class="share-icon">💼</span>
+        </button>
+      </div>
       <p class="tooltip">
         <strong>Schedule:</strong> ${formattedSchedule}
         <span class="tooltip-text">Regular meetings at this time throughout the semester</span>
@@ -586,6 +597,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    // Add click handlers for social share buttons
+    const shareButtons = activityCard.querySelectorAll(".share-button");
+    shareButtons.forEach((button) => {
+      button.addEventListener("click", (event) => {
+        handleShare(event, name, details.description, formattedSchedule);
+      });
+    });
 
     activitiesList.appendChild(activityCard);
   }
@@ -796,6 +815,42 @@ document.addEventListener("DOMContentLoaded", () => {
           console.error("Error unregistering:", error);
         }
       }
+    );
+  }
+
+  // Handle social sharing
+  function handleShare(event, activityName, description, schedule) {
+    const platform = event.currentTarget.classList.contains("twitter")
+      ? "twitter"
+      : event.currentTarget.classList.contains("facebook")
+      ? "facebook"
+      : "linkedin";
+
+    // Create the share text
+    const shareText = `Check out ${activityName} at Mergington High School! ${description}`;
+    const shareUrl = window.location.href;
+
+    // Open share dialog based on platform
+    let shareLink = "";
+    if (platform === "twitter") {
+      shareLink = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+        shareText
+      )}&url=${encodeURIComponent(shareUrl)}`;
+    } else if (platform === "facebook") {
+      shareLink = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        shareUrl
+      )}&quote=${encodeURIComponent(shareText)}`;
+    } else if (platform === "linkedin") {
+      shareLink = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+        shareUrl
+      )}`;
+    }
+
+    // Open in a new window
+    window.open(
+      shareLink,
+      "share-dialog",
+      "width=600,height=400,left=200,top=200"
     );
   }
 
