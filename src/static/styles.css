@@ -690,17 +690,17 @@ footer {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.share-button.twitter:hover {
+.share-button[data-platform="twitter"]:hover {
   background-color: #e8f5fe;
   border-color: #1da1f2;
 }
 
-.share-button.facebook:hover {
+.share-button[data-platform="facebook"]:hover {
   background-color: #e7f3ff;
   border-color: #1877f2;
 }
 
-.share-button.linkedin:hover {
+.share-button[data-platform="linkedin"]:hover {
   background-color: #e8f4f8;
   border-color: #0077b5;
 }

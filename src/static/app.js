@@ -44,6 +44,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // Authentication state
   let currentUser = null;
 
+  // Helper function to escape HTML to prevent XSS attacks
+  function escapeHtml(text) {
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
   // Time range mappings for the dropdown
   const timeRanges = {
     morning: { start: "06:00", end: "08:00" }, // Before school hours
@@ -524,13 +531,13 @@ document.addEventListener("DOMContentLoaded", () => {
       <h4>${name}</h4>
       <p>${details.description}</p>
       <div class="social-share-buttons">
-        <button class="share-button twitter" data-activity="${name}" data-description="${details.description}" title="Share on Twitter">
+        <button class="share-button" data-platform="twitter" data-activity="${escapeHtml(name)}" data-description="${escapeHtml(details.description)}" title="Share on Twitter">
           <span class="share-icon">🐦</span>
         </button>
-        <button class="share-button facebook" data-activity="${name}" data-description="${details.description}" title="Share on Facebook">
+        <button class="share-button" data-platform="facebook" data-activity="${escapeHtml(name)}" data-description="${escapeHtml(details.description)}" title="Share on Facebook">
           <span class="share-icon">📘</span>
         </button>
-        <button class="share-button linkedin" data-activity="${name}" data-description="${details.description}" title="Share on LinkedIn">
+        <button class="share-button" data-platform="linkedin" data-activity="${escapeHtml(name)}" data-description="${escapeHtml(details.description)}" title="Share on LinkedIn">
           <span class="share-icon">💼</span>
         </button>
       </div>
@@ -601,9 +608,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Add click handlers for social share buttons
     const shareButtons = activityCard.querySelectorAll(".share-button");
     shareButtons.forEach((button) => {
-      button.addEventListener("click", (event) => {
-        handleShare(event, name, details.description, formattedSchedule);
-      });
+      button.addEventListener("click", handleShare);
     });
 
     activitiesList.appendChild(activityCard);
@@ -819,12 +824,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Handle social sharing
-  function handleShare(event, activityName, description, schedule) {
-    const platform = event.currentTarget.classList.contains("twitter")
-      ? "twitter"
-      : event.currentTarget.classList.contains("facebook")
-      ? "facebook"
-      : "linkedin";
+  function handleShare(event) {
+    const button = event.currentTarget;
+    const platform = button.dataset.platform;
+    const activityName = button.dataset.activity;
+    const description = button.dataset.description;
 
     // Create the share text
     const shareText = `Check out ${activityName} at Mergington High School! ${description}`;
