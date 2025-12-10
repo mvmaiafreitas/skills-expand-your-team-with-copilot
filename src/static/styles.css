@@ -666,7 +666,6 @@ footer {
   background-color: rgba(255, 255, 255, 0.2);
   border: none;
   color: var(--primary-text);
-  padding: 6px 10px;
   font-size: 1.2rem;
   border-radius: 20px;
   cursor: pointer;
@@ -680,6 +679,14 @@ footer {
 
 #theme-toggle:hover {
   background-color: rgba(255, 255, 255, 0.3);
+}
+
+body.dark-mode #theme-toggle {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode #theme-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 #user-info {
