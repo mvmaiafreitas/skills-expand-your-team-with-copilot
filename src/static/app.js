@@ -522,7 +522,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Create difficulty badge (only if difficulty is specified)
     let difficultyBadgeHtml = "";
     if (details.difficulty) {
-      const difficultyClass = `difficulty-${details.difficulty.toLowerCase()}`;
+      // Safely create CSS class name by converting to lowercase and removing special characters
+      const difficultyClass = `difficulty-${details.difficulty.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
       difficultyBadgeHtml = `
         <span class="difficulty-badge ${difficultyClass}">
           ${details.difficulty}
