@@ -65,6 +65,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // Authentication state
   let currentUser = null;
 
+  // Helper function to escape HTML to prevent XSS attacks
+  function escapeHtml(text) {
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
   // Time range mappings for the dropdown
   const timeRanges = {
     morning: { start: "06:00", end: "08:00" }, // Before school hours
@@ -568,6 +575,17 @@ document.addEventListener("DOMContentLoaded", () => {
       ${difficultyBadgeHtml}
       <h4>${name}</h4>
       <p>${details.description}</p>
+      <div class="social-share-buttons">
+        <button class="share-button" data-platform="twitter" data-activity="${escapeHtml(name)}" data-description="${escapeHtml(details.description)}" title="Share on Twitter">
+          <span class="share-icon">🐦</span>
+        </button>
+        <button class="share-button" data-platform="facebook" data-activity="${escapeHtml(name)}" data-description="${escapeHtml(details.description)}" title="Share on Facebook">
+          <span class="share-icon">📘</span>
+        </button>
+        <button class="share-button" data-platform="linkedin" data-activity="${escapeHtml(name)}" data-description="${escapeHtml(details.description)}" title="Share on LinkedIn">
+          <span class="share-icon">💼</span>
+        </button>
+      </div>
       <p class="tooltip">
         <strong>Schedule:</strong> ${formattedSchedule}
         <span class="tooltip-text">Regular meetings at this time throughout the semester</span>
@@ -631,6 +649,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    // Add click handlers for social share buttons
+    const shareButtons = activityCard.querySelectorAll(".share-button");
+    shareButtons.forEach((button) => {
+      button.addEventListener("click", handleShare);
+    });
 
     activitiesList.appendChild(activityCard);
   }
@@ -854,6 +878,41 @@ document.addEventListener("DOMContentLoaded", () => {
           console.error("Error unregistering:", error);
         }
       }
+    );
+  }
+
+  // Handle social sharing
+  function handleShare(event) {
+    const button = event.currentTarget;
+    const platform = button.dataset.platform;
+    const activityName = button.dataset.activity;
+    const description = button.dataset.description;
+
+    // Create the share text
+    const shareText = `Check out ${activityName} at Mergington High School! ${description}`;
+    const shareUrl = window.location.href;
+
+    // Open share dialog based on platform
+    let shareLink = "";
+    if (platform === "twitter") {
+      shareLink = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+        shareText
+      )}&url=${encodeURIComponent(shareUrl)}`;
+    } else if (platform === "facebook") {
+      shareLink = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        shareUrl
+      )}&quote=${encodeURIComponent(shareText)}`;
+    } else if (platform === "linkedin") {
+      shareLink = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+        shareUrl
+      )}`;
+    }
+
+    // Open in a new window
+    window.open(
+      shareLink,
+      "share-dialog",
+      "width=600,height=400,left=200,top=200"
     );
   }
 
